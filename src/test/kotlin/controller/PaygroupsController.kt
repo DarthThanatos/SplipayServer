@@ -5,20 +5,21 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpMethod
 import org.springframework.test.context.junit4.SpringRunner
 import splitpay.Application
 import splitpay.model.Paygroups
-import splitpay.model.Users
 import splitpay.repository.PaygroupRepository
+import util.ListFetcher
+import util.Monter
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = arrayOf(Application::class), webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = arrayOf(Application::class, ListFetcher::class, Monter::class), webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class PaygroupsControllerTest{
 
     @Autowired private lateinit var restTemplate: TestRestTemplate
     @Autowired private lateinit var paygroupRepository: PaygroupRepository
+    @Autowired private lateinit var listFetcher: ListFetcher
+    @Autowired private lateinit var monter: Monter
 
     @Test
     fun testGetGroup(){
@@ -32,17 +33,10 @@ class PaygroupsControllerTest{
         assert(res == expected)
     }
 
-    private inline fun <reified T> typeReference() = object : ParameterizedTypeReference<List<T>>() {
-        init{T::class.java.apply{}}
-    }
-
-    private inline fun <reified T> getList(url: String) =
-        restTemplate.exchange(url, HttpMethod.GET, null, typeReference<T>()).body!!
-
     @Test
     fun testGetUserGroups(){
         val url = "http://localhost:8080/paygroups/user/20005"
-        val res = getList<Paygroups>(url)
+        val res = listFetcher.getPaygroups(url)
         assert(res.size == 2)
         assert(Paygroups(3, "test group 2", true) in res)
         assert(Paygroups(209, "COCOGA", true) in res)
@@ -51,15 +45,15 @@ class PaygroupsControllerTest{
     @Test
     fun testNamedGroup(){
         val url = "http://localhost:8080/paygroups/group-name/20005/coco"
-        val res = getList<Paygroups>(url)
+        val res = listFetcher.getPaygroups(url)
         assert(Paygroups(209, "COCOGA", true) in res)
     }
 
     @Test
     fun testPost(){
         val url = "http://localhost:8080/paygroups"
-        val paygroups = Paygroups(-1, "testx", false)
-        paygroups.leader = Users(20004)
+        val paygroups = monter.getMockedGroup(displayName = "testx", isActive = false)
+
         val res = restTemplate.postForObject(url, paygroups, Paygroups::class.java)
         assert (res.displayname == paygroups.displayname && res.isactive == paygroups.isactive)
 

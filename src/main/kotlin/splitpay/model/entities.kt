@@ -43,7 +43,7 @@ data class Bills (
 
 
 @Entity
-data class InvolvedBillPayees(
+data class Involvedbillpayees(
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY) val id: Long
 ){
     @ManyToOne @JoinColumn(name = "billid") lateinit var bill: Bills
