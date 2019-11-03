@@ -95,6 +95,8 @@ select * from members;
 select * from transactions;
 select * from involvedbillpayees;
 
+select * from users where email like 'bielas.robert95%';
+
 select * from bills b 
 join members m on m.memberid = payer
 join paygroups using(groupid);

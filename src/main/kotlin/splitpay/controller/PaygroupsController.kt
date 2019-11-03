@@ -21,6 +21,14 @@ class PaygroupsController{
     fun getPaygroupsOfUser(@PathVariable("userid") userId: Long) =
         paygroupsService.getGroupsOfUser(userId)
 
+    //e.g. localhost:8080/paygroups/participating-user/20005
+    @GetMapping("/paygroups/participating-user/{userid}")
+    fun getPaygroupsOfParticipatingUser(@PathVariable("userid") userId: Long) =
+        paygroupsService.getAllOfParticipating(userId)
+
+    @GetMapping("/paygroups/all")
+    fun getAllPaygroups() = paygroupsService.getAllPaygroups()
+
     //e.g. localhost:8080/paygroups/group-name/20005/coco
     @GetMapping("/paygroups/group-name/{userId}/{groupName}")
     fun getGroupsOfUserWithGroupName(

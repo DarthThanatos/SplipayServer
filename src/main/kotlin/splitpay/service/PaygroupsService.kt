@@ -12,7 +12,11 @@ class PaygroupsService{
 
     fun getPaygroup(groupId: Long) = paygroupRepository.findById(groupId)
 
-    fun getGroupsOfUser(userId: Long)  = paygroupRepository.findByUserid(userId)
+    fun getAllPaygroups() = paygroupRepository.getAll()
+
+    fun getAllOfParticipating(userId: Long) = paygroupRepository.getAllOfParticipating()
+
+    fun getGroupsOfUser(userId: Long)  = paygroupRepository.getAllOfUser()//paygroupRepository.findByUserid(userId)
 
     fun getGroupsOfUserWithGroupDisplayName(userId: Int, groupName: String)
         = paygroupRepository.findGroupByUserAndGroupName(userId, groupName)

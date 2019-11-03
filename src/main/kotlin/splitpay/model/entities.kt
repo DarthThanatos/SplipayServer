@@ -1,16 +1,29 @@
 package splitpay.model
 
+import splitpay.util.DEFAULT_AVATAR_URL
 import javax.persistence.*
 
-@Entity
-data class Users(
+@Entity()
+@Table(name="users")
+data class User(
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY) val userid: Long,
-    val email: String  = "",
-    val displayname: String = "",
-    val isoffline: Boolean = true,
-    val avatarUrl: String = ""
-)
+    @GeneratedValue(strategy=GenerationType.IDENTITY) var userid: Long? = null,
+    val email: String? = null,
+    var displayname: String? = null,
+    var isoffline: Boolean? = null,
+    var avatarUrl: String? = null
+){
+    companion object {
+        fun withDefaultsSupplied(user: User): User{
+            val res = user.apply {
+                avatarUrl = if((avatarUrl ?: "").trim() == "") DEFAULT_AVATAR_URL else avatarUrl
+                isoffline = if(isoffline == null) true else isoffline
+            }
+            println("User with filled defaults: $user")
+            return res
+        }
+    }
+}
 
 @Entity
 data class Paygroups(
@@ -19,7 +32,7 @@ data class Paygroups(
     val isactive: Boolean = false
 ){
 
-      @ManyToOne @JoinColumn(name = "leaderuserid") lateinit var leader: Users
+      @ManyToOne @JoinColumn(name = "leaderuserid") lateinit var leader: User
 }
 
 @Entity
@@ -27,7 +40,7 @@ data class Members(
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY) val memberid: Long,
     val balance: Int = 0
 ){
-    @ManyToOne @JoinColumn(name = "userid") lateinit var user: Users
+    @ManyToOne @JoinColumn(name = "userid") lateinit var user: User
     @ManyToOne @JoinColumn(name = "groupid") lateinit var paygroup: Paygroups
 }
 

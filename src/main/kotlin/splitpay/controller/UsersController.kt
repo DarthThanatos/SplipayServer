@@ -2,7 +2,7 @@ package splitpay.controller
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import splitpay.model.Users
+import splitpay.model.User
 import splitpay.service.UsersService
 
 @Suppress("unused")
@@ -22,8 +22,12 @@ class UsersController{
 
 
     @PostMapping("/users")
-    fun addUser(@RequestBody user: Users) =
+    fun addUser(@RequestBody user: User) =
         usersService.addUser(user)
 
 
+    @DeleteMapping("/users/{userid}")
+    fun deleteUser(@PathVariable("uswerid") userId: Long){
+        usersService.deleteUser(userId)
+    }
 }
